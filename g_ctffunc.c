@@ -666,10 +666,12 @@ void ctf_playerdropflag(edict_t * whichplayer, gitem_t *item)
 			sprintf(message,"%s lost the %s flag.\n",
 				whichplayer->client->pers.netname,
 				flagcolor );
-			stats_set(whichplayer, STATS_IS_FC, 0);
+			stats_set(whichplayer, STATS_IS_FC, 0); // BUZZKILL - WHO IS FC?
 			
 			stats_add(whichplayer, STATS_OFFENSE_FLAGLOST, 1); // STATS - LM_Hati
 
+			stats_add(whichplayer, SQL_FLAG_DROPS, 1); // BUZZKILL - SQLITE STATS
+			
 			// STDLog Flag Carrier Frag - Surt
 			sl_LogScore( &gi,
 				whichplayer->client->pers.netname,
@@ -743,7 +745,7 @@ qboolean ctf_flagtouch (edict_t *ent, edict_t *other)
 					other->client->pers.netname,
 					flagcolor);
 
-				stats_set(other, STATS_IS_FC, 0);
+				stats_set(other, STATS_IS_FC, 0); // BUZZKILL - WHO IS FC?
 
 				Team_cprint(otherflag->flagteam, message, elsemessage);
 
@@ -758,10 +760,12 @@ qboolean ctf_flagtouch (edict_t *ent, edict_t *other)
 						ctf_BSafePrint(PRINT_HIGH, message);
 
 						stats_add(assister, STATS_SCORE, 1);
+						stats_add(assister, SQL_SCORE, 1); // BUZZKILL - SQLITE STATS
 						assister->client->resp.score += 1;
 						assister->client->kill_carrier_time = 0;
 
 						stats_add(assister, STATS_ASSISTS, 1); // STATS - LM_Hati
+						stats_add(assister, SQL_ASSISTS, 1); // BUZZKILL - SQLITE STATS
 
 						// STDLog Flag Capture Frag Carrier - Surt
 						sl_LogScore( &gi,
@@ -779,10 +783,12 @@ qboolean ctf_flagtouch (edict_t *ent, edict_t *other)
 							assister->client->pers.netname);
 						ctf_BSafePrint(PRINT_HIGH, message);
 						stats_add(assister, STATS_SCORE, 1);
+						stats_add(assister, SQL_SCORE, 1); // BUZZKILL - SQLITE STATS
 						assister->client->resp.score += 1;
 						assister->client->return_flag_time = 0;
 
 						stats_add(assister, STATS_ASSISTS, 1); // STATS - LM_Hati
+						stats_add(assister, SQL_ASSISTS, 1); // BUZZKILL - SQLITE STATS
 
 						// STDLog Flag Capture Return Bonus - Surt
 						sl_LogScore( &gi,
@@ -800,10 +806,12 @@ qboolean ctf_flagtouch (edict_t *ent, edict_t *other)
 							assister->client->pers.netname);
 						ctf_BSafePrint(PRINT_HIGH, message);
 						stats_add(assister, STATS_SCORE, 1);
+						stats_add(assister, SQL_SCORE, 1); // BUZZKILL - SQLITE STATS
 						assister->client->resp.score += 1;
 						assister->client->defend_flag_time = 0;
 
 						stats_add(assister, STATS_ASSISTS, 1); // STATS - LM_Hati
+						stats_add(assister, SQL_ASSISTS, 1); // BUZZKILL - SQLITE STATS
 
 						// STDLog Flag Capture Defend Bonus - Surt
 						sl_LogScore( &gi,
@@ -839,8 +847,10 @@ qboolean ctf_flagtouch (edict_t *ent, edict_t *other)
 
 				//  Add score to team
 				stats_add(other, STATS_SCORE, CTF_CAPTURE_BONUS_CARRIER);
+				stats_add(other, SQL_SCORE, CTF_CAPTURE_BONUS_CARRIER); // BUZZKILL - SQLITE STATS
 				other->client->resp.score += CTF_CAPTURE_BONUS_CARRIER; //5 for being the actual capturer
 				stats_add(other, STATS_CAPTURES, 1);
+				stats_add(other, SQL_FLAG_CAPTURES, 1); // BUZZKILL - SQLITE STATS
 				// STDLog Flag Capture - Surt
 				sl_LogScore( &gi,
 					other->client->pers.netname,
@@ -888,6 +898,7 @@ qboolean ctf_flagtouch (edict_t *ent, edict_t *other)
 				while (teammate)
 				{
 					stats_add(teammate, STATS_SCORE, scorebonus);
+					stats_add(teammate, SQL_SCORE, scorebonus); // BUZZKILL - SQLITE STATS
 					teammate->client->resp.score += scorebonus;
 					// STDLog Flag Capture Team Score - Surt
 					sl_LogScore( &gi,
@@ -933,8 +944,10 @@ qboolean ctf_flagtouch (edict_t *ent, edict_t *other)
 				flagcolor);
 
 			stats_add(other, STATS_RETURNS, 1); // STATS - LM_Hati
+			stats_add(other, SQL_FLAG_RETURNS, 1); // BUZZKILL - SQLITE STATS
 
 			stats_add(other, STATS_SCORE, 1);
+			stats_add(other, SQL_SCORE, 1); // BUZZKILL - SQLITE STATS
 
         // STDLog Flag Recover - Surt
         sl_LogScore( &gi,
@@ -960,7 +973,7 @@ qboolean ctf_flagtouch (edict_t *ent, edict_t *other)
 						assister->client->pers.netname, other->client->pers.netname, flagcolor);
 					ctf_BSafePrint(PRINT_HIGH, message);
 					stats_add(assister, STATS_SCORE, 1);
-
+					stats_add(assister, SQL_SCORE, 1); // BUZZKILL - SQLITE STATS
 					// Log Flag Recover - MarkDavies
 					sl_LogScore( &gi,
 						assister->client->pers.netname,
@@ -974,6 +987,7 @@ qboolean ctf_flagtouch (edict_t *ent, edict_t *other)
 					assister->client->kill_carrier_time = 0;
 					
 					stats_add(assister, STATS_ASSISTS, 1); // STATS - LM_Hati
+					stats_add(assister, SQL_ASSISTS, 1); // BUZZKILL - SQLITE STATS
 				}
 				assister = ctf_findplayer(assister, other, other->client->ctf.teamnum);
 			}
@@ -1005,9 +1019,10 @@ qboolean ctf_flagtouch (edict_t *ent, edict_t *other)
 		sprintf(elsemessage, "%s stole the %s flag.\n",
 			other->client->pers.netname,
 			flagcolor);
-		stats_set(other, STATS_IS_FC, 1);
+		stats_set(other, STATS_IS_FC, 1); // BUZZKILL - WHO IS FC?
 
 		stats_add(other, STATS_OFFENSE_FLAG, 1); // STATS - LM_Hati
+		stats_add(other, SQL_FLAG_PICKUPS, 1); // BUZZKILL - SQLITE STATS
 		// Log Flag Pickup - MarkDavies
 		sl_LogScore( &gi,
 			other->client->pers.netname,

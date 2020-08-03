@@ -30,9 +30,53 @@
 #define STATS_ITEM_ARMOR		22	// picked up red armor
 #define STATS_ITEM_MEGA			23  // picked up mega health
 #define STATS_IS_FC				24	// is the flag carrier
+#define STATS_HAS_ST			25	// has the strength rune
+#define STATS_HAS_RS			26	// has the resist rune
+#define STATS_HAS_HA			27	// has the haste rune
+#define STATS_HAS_RG			29	// has the regen rune
+#define STATS_RAIL_SHOT			30  // railgun shots fired
+#define STATS_RAIL_HIT			31  // railgun hits
+#define STATS_RAIL_KILL			32  // railgun kills (not equal to hits due to armor, runes, etc.)
+#define STATS_RAIL_ACCURACY		33  // railgun accuracy
+#define STATS_DAMAGE_OUT		34  // damage given
+#define STATS_DAMAGE_IN			35  // damage received
 // BUZZKILL - IMPROVED ANALYTICS - END
 
-#define MAX_PLAYER_STATS		25	
+// BUZZKILL - SQLITE - START
+#define SQL_SHOTS				36 // Not currently implemented
+#define SQL_SHOTS_HIT			37 // Not currently implemented
+#define SQL_SCORE				38
+#define SQL_FRAGS				39
+#define SQL_DEATHS				40
+#define SQL_DEF_BASE			41
+#define SQL_DEF_FLAG			42
+#define SQL_DEF_CARRIER			43
+#define SQL_FLAG_PICKUPS		44
+#define SQL_FLAG_DROPS			45
+#define SQL_FLAG_CAPTURES		46
+#define SQL_FLAG_KILLS			47
+#define SQL_FLAG_RETURNS		48
+#define SQL_ASSISTS				49
+#define SQL_RAIL_SHOT			50
+#define SQL_RAIL_HIT			51
+#define SQL_RAIL_KILL			52
+#define SQL_RUNE_STRENGTH		53
+#define SQL_RUNE_HASTE			54
+#define SQL_RUNE_REGEN			55
+#define SQL_RUNE_RESIST			56
+#define SQL_ITEM_QUAD			57
+#define SQL_ITEM_SHIELD			58
+#define SQL_ITEM_ARMOR			59
+#define SQL_ITEM_MEGA			60
+#define SQL_DAMAGE_OUT			61 // Not currently implemented
+#define SQL_DAMAGE_IN			62 // Not currently implemented
+#define SQL_MVP_OFF				63
+#define SQL_MVP_DEF				64
+// BUZZKILL - SQLITE - END
+
+#define MAX_PLAYER_STATS		65	
+
+#define LMCTF_DATABASE			"lmctf.db"
 
 typedef struct {
 	char name[MAX_INFO_STRING];
@@ -71,7 +115,6 @@ typedef struct {
 typedef struct {
 	stats_client_s perp;
 } stats_single_data_s;
-
 
 void stats_add(edict_t* ent, int stat, long amount);
 void stats_set(edict_t* ent, int stat, long amount);

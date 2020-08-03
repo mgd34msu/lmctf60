@@ -983,6 +983,9 @@ void Team_Change (edict_t *ent, int newnum)
 	stats_add(ent, STATS_SCORE, 1);
 	stats_add(ent, STATS_DEATHS, -1);
 
+	stats_add(ent, SQL_SCORE, 1); // BUZZKILL - SQLITE STATS
+	stats_add(ent, SQL_DEATHS, -1); // BUZZKILL - SQLITE STATS
+
 	// don't even bother waiting for death frames
 	ctf_SetEntTeam(ent, newnum); //switch teams after they die
 	
@@ -2304,6 +2307,35 @@ void ClientCommand(edict_t* ent)
 		Cmd_Score_f(ent);
 		return;
 	}
+	// BUZZKILL - SQLITE STATS
+	if (Q_stricmp(cmd, "sqlite_create") == 0)
+	{
+		//Cmd_SQLiteCreateDB_f(); // uncomment to enable
+		return;
+	}
+	if (Q_stricmp(cmd, "sqlite_alldata") == 0)
+	{
+		//Cmd_SQLiteShowAllData_f(); // uncomment to enable - executes: select * from players;
+		return;
+	}
+	
+	// BUZZKILL - IMPROVED ANALYTICS - STATS BOARDS
+	if (Q_stricmp(cmd, "playerstats") == 0)
+	{
+		Cmd_Statboard_f(ent);
+		return;
+	}
+	if (Q_stricmp(cmd, "teamstats") == 0)
+	{
+		Cmd_TeamStatboard_f(ent);
+		return;
+	}
+	if (Q_stricmp(cmd, "railstats") == 0)
+	{
+		Cmd_Railboard_f(ent);
+		return;
+	}
+
 	// ADC
 	else if (Q_stricmp(cmd, "squadboard") == 0)
 	{

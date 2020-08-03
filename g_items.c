@@ -181,6 +181,7 @@ qboolean Pickup_Powerup(edict_t* ent, edict_t* other)
 	if (ent->item == FindItemByClassname("item_quad"))
 	{
 		stats_add(other, STATS_ITEM_QUAD, 1);
+		stats_add(other, SQL_ITEM_QUAD, 1); // BUZZKILL - SQLITE STATS
 		sl_LogPickup(&gi,
 			"PlayerEvent",
 			other->client->pers.netname,
@@ -632,6 +633,7 @@ qboolean Pickup_Health(edict_t* ent, edict_t* other)
 
 		// BUZZKILL - IMPROVED ANALYTICS - START
 		stats_add(other, STATS_ITEM_MEGA, 1);
+		stats_add(other, SQL_ITEM_MEGA, 1); // BUZZKILL - SQLITE STATS
 		sl_LogPickup(&gi,
 			"PlayerEvent",
 			other->client->pers.netname,
@@ -745,6 +747,7 @@ qboolean Pickup_Armor(edict_t* ent, edict_t* other)
 	if (ent->item == FindItemByClassname("item_armor_body"))
 	{
 		stats_add(other, STATS_ITEM_ARMOR, 1);
+		stats_add(other, SQL_ITEM_ARMOR, 1); // BUZZKILL - SQLITE STATS
 		sl_LogPickup(&gi,
 			"PlayerEvent",
 			other->client->pers.netname,
@@ -915,6 +918,7 @@ qboolean Pickup_PowerArmor(edict_t* ent, edict_t* other)
 
 	// BUZZKILL - IMPROVED ANALYTICS - START
 	stats_add(other, STATS_ITEM_SHIELD, 1);
+	stats_add(other, SQL_ITEM_SHIELD, 1); // BUZZKILL - SQLITE STATS
 	sl_LogPickup(&gi,
 		"PlayerEvent",
 		other->client->pers.netname,

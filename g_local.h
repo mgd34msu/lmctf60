@@ -659,6 +659,11 @@ void PlayTeamSound(edict_t *ent, char *sound); // LM_JORM
 void PlayVoiceSound(edict_t *ent, char *sound); // LM_Surt
 void Cmd_Squadboard_f (edict_t *ent); // ADC
 
+// BUZZKILL - IMPROVED ANALYTICS - STATS BOARDS
+void Cmd_Statboard_f(edict_t* ent);
+void Cmd_TeamStatboard_f(edict_t* ent);
+void Cmd_Railboard_f(edict_t* ent);
+
 //
 // g_items.c
 //
@@ -890,6 +895,11 @@ void ValidateSelectedItem (edict_t *ent);
 void DeathmatchScoreboardMessage (edict_t *client, edict_t *killer);
 void SquadboardMessage (edict_t *client, edict_t *killer); // ADC
 
+// BUZZKILL - IMPROVED ANALYTICS - STATS BOARDS
+void StatboardMessage(edict_t* client, edict_t* killer);
+void TeamStatboardMessage(edict_t* client, edict_t* killer);
+void RailboardMessage(edict_t* client, edict_t* killer);
+
 //
 // g_pweapon.c
 //
@@ -936,6 +946,13 @@ void Observer_Start (edict_t *ent);
 #endif
 // LM_SURT
 // END LM_JORM
+
+// BUZZKILL - SQLITE STATS
+void SQL_Init_Player(stats_player_s* p_player);
+void SQL_Stats_Update(edict_t* ent);
+void SQL_Update_Player(stats_player_s* p_player);
+void Cmd_SQLiteShowAllData_f();
+void Cmd_SQLiteCreateDB_f();
 
 //============================================================================
 
@@ -1028,6 +1045,23 @@ typedef struct
 	//qboolean						toss_state; // BUZZKILL - should tossed thing track nearest player?
 } client_ctf_t;
 
+typedef struct sql_stats_s 
+{
+	int shots;
+	int shots_hit;
+	int score;
+	int frags;
+	int deaths;
+	int def_base;
+	int def_flag;
+	int def_carrier;
+	int flag_pickups;
+	int flag_drops;
+	int flag_captures;
+	int flag_kills;
+	int flag_returns;
+	int assists;
+}sql_stats_t;
 
 // this structure is cleared on each PutClientInServer(),
 // except for 'client->pers'
@@ -1047,6 +1081,11 @@ struct gclient_s
 	qboolean	showhelp;
 	qboolean	showhelpicon;
 	qboolean		showsquadboard;	// ADC
+
+	// BUZZKILL - IMPROVED ANALYTICS - STATS BOARDS
+	qboolean	showstatboard;
+	qboolean	showteamstatboard;
+	qboolean	showrailboard;
 
 	int			ammo_index;
 
@@ -1163,6 +1202,7 @@ struct gclient_s
 	client_ctf_t    ctf;
 	stats_player_s *p_stats_player; // STATS - LM_Hati
 	// END TEAM CODE
+	sql_stats_t* sql_stats;
 };
 
 
@@ -1326,6 +1366,7 @@ struct edict_s
 	float           droptime;
 	int             entprops; //flags to tag entities with, for use with flags, which have no client
 	// END CTF CODE
+
 };
 
 #endif

@@ -180,6 +180,7 @@ void Victory()
 
 	if (dmvp)
 	{
+		stats_add(dmvp, SQL_MVP_DEF, 1);
 		strcpy(teambuf,"");
 		ctf_teamstring(teambuf,dmvp->client->ctf.teamnum,CTF_TEAM_MATCHING);
 		
@@ -190,6 +191,7 @@ void Victory()
 	}
 	if (omvp)
 	{
+		stats_add(omvp, SQL_MVP_OFF, 1);
 		strcpy(teambuf,"");
 		ctf_teamstring(teambuf,omvp->client->ctf.teamnum,CTF_TEAM_MATCHING);
 		

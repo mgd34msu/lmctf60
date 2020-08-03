@@ -43,6 +43,8 @@ stats_player_s* stats_find_dropped_player(char* name)
 
 void stats_init_player(stats_player_s* p_player)
 {
+	SQL_Init_Player(p_player); // BUZZKILL - SQLITE STATS
+
 	// set up initial stats for player
 	int i;
 	for (i = 0; i < MAX_PLAYER_STATS; i++)
@@ -106,6 +108,7 @@ void stats_cleanup()
 		return;
 	}
 
+	SQL_Update_Player(p_start_player);
 	stats_init_player(p_start_player);
 
 	// clear out dropped players and reinitialize stats
@@ -121,6 +124,7 @@ void stats_cleanup()
 		}
 		else
 		{
+			SQL_Update_Player(p_current_player);
 			stats_init_player(p_current_player);
 			p_prev_player = p_current_player;
 		}
@@ -189,7 +193,6 @@ void stats_output(edict_t* ent, stats_player_s* p_player)
 	sprintf(tmpbuf, "\n(%s) [%s] %s\n", teambuf, conbuf, p_player->info.name);
 	strcat(outbuf, tmpbuf);
 
-	// BUZZKILL - IMPROVED ANALYTICS - START
 	sprintf(tmpbuf, "--SCORE--------------------------------------\nScore=%ld Frags=%ld Deaths=%ld Eff=%ld%%\n",
 		p_player->stats[STATS_SCORE],
 		p_player->stats[STATS_FRAGS],
@@ -214,8 +217,8 @@ void stats_output(edict_t* ent, stats_player_s* p_player)
 		p_player->stats[STATS_PING_SAMPLES]);
 	strcat(outbuf, tmpbuf);
 
-	// BUZZKILL - IMPROVED ANALYTICS - RUNES
-	sprintf(tmpbuf, "--PICKUPS------------------------------------\nStrength=%ld Haste=%ld Regen=%ld Resist=%ld\nQuad=%ld Shield=%ld Armor=%ld Mega=%ld\n---------------------------------------------\n",
+	// BUZZKILL - IMPROVED ANALYTICS - START
+	sprintf(tmpbuf, "--PICKUPS------------------------------------\nStrength=%ld Haste=%ld Regen=%ld Resist=%ld\nQuad=%ld Shield=%ld Armor=%ld Mega=%ld\n",
 		p_player->stats[STATS_RUNE_STRENGTH],
 		p_player->stats[STATS_RUNE_HASTE],
 		p_player->stats[STATS_RUNE_REGEN],
@@ -224,6 +227,19 @@ void stats_output(edict_t* ent, stats_player_s* p_player)
 		p_player->stats[STATS_ITEM_SHIELD],
 		p_player->stats[STATS_ITEM_ARMOR],
 		p_player->stats[STATS_ITEM_MEGA]);
+	strcat(outbuf, tmpbuf);
+
+	sprintf(tmpbuf, "--RAIL---------------------------------------\nShots=%ld Hits=%ld Kills=%ld Accuracy=%ld\n",
+		p_player->stats[STATS_RAIL_SHOT],
+		p_player->stats[STATS_RAIL_HIT],
+		p_player->stats[STATS_RAIL_KILL],
+		p_player->stats[STATS_RAIL_SHOT] == 0 ? 0 : 100 * p_player->stats[STATS_RAIL_HIT] / p_player->stats[STATS_RAIL_SHOT]);
+	strcat(outbuf, tmpbuf);
+
+	sprintf(tmpbuf, "--DAMAGE-------------------------------------\nGiven=%ld Received=%ld Eff=%ld\n---------------------------------------------\n",
+		p_player->stats[STATS_DAMAGE_OUT],
+		p_player->stats[STATS_DAMAGE_IN],
+		p_player->stats[STATS_DAMAGE_IN] == 0 ? 100 : 100 * p_player->stats[STATS_DAMAGE_OUT] / p_player->stats[STATS_DAMAGE_IN]);
 	strcat(outbuf, tmpbuf);
 	// BUZZKILL - IMPROVED ANALYTICS - END
 

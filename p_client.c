@@ -479,6 +479,9 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 					self->client->resp.score--;
 					stats_add(self, STATS_SCORE, -1);
 					stats_add(self, STATS_DEATHS, 1);
+
+					stats_add(self, SQL_SCORE, -1); // BUZZKILL - SQLITE STATS
+					stats_add(self, SQL_DEATHS, 1); // BUZZKILL - SQLITE STATS
 				}
 			}
 			self->enemy = NULL;
@@ -615,12 +618,22 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 					{
 						stats_add(attacker, STATS_SCORE, -1);
 						stats_add(attacker, STATS_DEATHS, 1);
+
+						stats_add(attacker, SQL_SCORE, -1); // BUZZKILL - SQLITE STATS
+						stats_add(attacker, SQL_DEATHS, 1); // BUZZKILL - SQLITE STATS
+
 						attacker->client->resp.score--;
 					}
 					else
 					{
 						stats_add(attacker, STATS_SCORE, 1);
 						stats_add(attacker, STATS_FRAGS, 1);
+						stats_add(self, STATS_DEATHS, 1); // BUZZKILL - Death count was missing for some reason?
+
+						stats_add(attacker, SQL_SCORE, 1); // BUZZKILL - SQLITE STATS
+						stats_add(attacker, SQL_FRAGS, 1); // BUZZKILL - SQLITE STATS
+						stats_add(self, SQL_DEATHS, 1); // BUZZKILL - SQLITE STATS
+
 						attacker->client->resp.score++;
 					}
 				}
@@ -637,6 +650,9 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 		 self->client->resp.score--;
 		 stats_add(self, STATS_SCORE, -1);
 		 stats_add(self, STATS_DEATHS, 1);
+
+		 stats_add(self, SQL_SCORE, -1); // BUZZKILL - SQLITE STATS
+		 stats_add(self, SQL_DEATHS, 1); // BUZZKILL - SQLITE STATS
 	 }
 }
 
@@ -758,8 +774,6 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 	//self has just died.  was self interesting in some way?
 	ctf_validateflags();
 	
-	//stats_add(self, STATS_DEATHS, 1); // STATS - LM_Hati
-	
 	//first, make sure self and attacker were valid players
 	if (ctf_validateplayer(attacker, CTF_TEAM_ANYTEAM) &&
 		ctf_validateplayer(self,CTF_TEAM_ANYTEAM) &&
@@ -808,9 +822,11 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 						ctf_BSafePrint(PRINT_HIGH, message);
 						attacker->client->resp.score += 2;
 						stats_add(attacker, STATS_SCORE, 2);
+						stats_add(attacker, SQL_SCORE, 2); // BUZZKILL - SQLITE STATS
 						attacker->client->defend_flag_time = level.time;
 						
 						stats_add(attacker, STATS_DEFENSE_FLAG, 1); // STATS - LM_Hati
+						stats_add(attacker, SQL_DEF_FLAG, 1); // BUZZKILL - SQLITE STATS
 						// STDLog Flag Defense - Surt
 						sl_LogScore( &gi,
 									 attacker->client->pers.netname,
@@ -844,8 +860,11 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 						ctf_BSafePrint(PRINT_HIGH, message);
 						attacker->client->resp.score += 1;
 						stats_add(attacker, STATS_SCORE, 1);
-						
+						stats_add(attacker, SQL_SCORE, 1); // BUZZKILL - SQLITE STATS
+
 						stats_add(attacker, STATS_DEFENSE_BASE, 1); // STATS - LM_Hati
+						stats_add(attacker, SQL_DEF_BASE, 1); // BUZZKILL - SQLITE STATS
+
 						// Log Flag Defense - MarkDavies
 						sl_LogScore( &gi,
 									 attacker->client->pers.netname,
@@ -891,7 +910,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 						ctf_BSafePrint(PRINT_HIGH, message);
 						attacker->client->resp.score += 3;
 						stats_add(attacker, STATS_SCORE, 3);
-						
+						stats_add(attacker, SQL_SCORE, 3); // BUZZKILL - SQLITE STATS
 						// STDLog Flag Danger Carrier Protect Frag - Surt
 						sl_LogScore( &gi,
 									 attacker->client->pers.netname,
@@ -903,6 +922,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 						
 						
 						stats_add(attacker, STATS_DEFENSE_CARRIER, 1); // STATS - LM_Hati
+						stats_add(attacker, SQL_DEF_CARRIER, 1); // BUZZKILL - SQLITE STATS
 					}
 					else
 					{
@@ -928,8 +948,11 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 							ctf_BSafePrint(PRINT_HIGH, message);
 							attacker->client->resp.score += 2;
 							stats_add(attacker, STATS_SCORE, 2);
-							
+							stats_add(attacker, SQL_SCORE, 2); // BUZZKILL - SQLITE STATS
+
 							stats_add(attacker, STATS_DEFENSE_CARRIER, 1); // STATS - LM_Hati
+							stats_add(attacker, SQL_DEF_CARRIER, 1); // BUZZKILL - SQLITE STATS
+
 							// STDLog Flag Carrier Protect Frag - Surt
 							sl_LogScore( &gi,
 										 attacker->client->pers.netname,
@@ -954,6 +977,8 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 				ctf_BSafePrint(PRINT_HIGH, message);
 				attacker->client->resp.score += 2;
 				stats_add(attacker, STATS_SCORE, 2);
+				stats_add(attacker, SQL_SCORE, 2); // BUZZKILL - SQLITE STATS
+
 				attacker->client->kill_carrier_time = level.time;
 				
 				// STDLog Flag Carrier Frag - Surt
@@ -966,6 +991,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 							 level.time );
 				
 				stats_add(attacker, STATS_OFFENSE_CARRIER, 1); // STATS - LM_Hati
+				stats_add(attacker, SQL_FLAG_KILLS, 1); // BUZZKILL - SQLITE STATS
 			}
 		}
 		
@@ -2517,6 +2543,7 @@ void ClientDisconnect (edict_t *ent)
 	// STATS-BEGIN LM_Hati
 	if (ent->client->p_stats_player)
 	{
+		SQL_Stats_Update(ent); // BUZZKILL - SQLITE STATS
 		ent->client->p_stats_player->dropped = true;
 		ent->client->p_stats_player->info.teamnum = ent->client->ctf.teamnum;
 	}
@@ -2541,7 +2568,6 @@ void ClientDisconnect (edict_t *ent)
 		G_FreeEdict (ent->client->hook);
 		ent->client->hook = NULL;
 	}
-	
 	
 	// END CTF CODE -- LM_JORM
 	
@@ -3372,6 +3398,8 @@ int New_Team;
 	Old_Team = ent->client->ctf.teamnum;
 	New_Team = Team_To_Join(ent);
 	
+	//CheckPlayerData(ent);
+
 	if(Old_Team > CTF_TEAM_UNDEFINED)
 	{
 		ctf_SetEntTeam(ent, Old_Team);

@@ -444,7 +444,8 @@ void SP_damage_rune(edict_t* self)
 qboolean Pickup_Rune(edict_t* ent, edict_t* other)
 {
 	char* runeName = NULL; // BUZZKILL - IMPROVED ANALYTICS
-	int		runeID = 0; // BUZZKILL - IMPROVED ANALYTICS // problematic if this remains at 0
+	int		runeID = 0; // BUZZKILL - IMPROVED ANALYTICS
+	int		runeSQL = 0; // BUZZKILL - SQLITE STATS
 
 	if (!other->client->rune) // don't already have rune
 	{
@@ -466,24 +467,29 @@ qboolean Pickup_Rune(edict_t* ent, edict_t* other)
 		case RUNE_DAMAGE:
 			runeName = "rune_damage";
 			runeID = STATS_RUNE_STRENGTH;
+			runeSQL = SQL_RUNE_STRENGTH;
 			break;
 		case RUNE_HASTE:
 			runeName = "rune_haste";
 			runeID = STATS_RUNE_HASTE;
+			runeSQL = SQL_RUNE_HASTE;
 			break;
 		case RUNE_REGEN:
 			runeName = "rune_regen";
 			runeID = STATS_RUNE_REGEN;
+			runeSQL = SQL_RUNE_REGEN;
 			break;
 		case RUNE_RESIST:
 			runeName = "rune_resist";
 			runeID = STATS_RUNE_RESIST;
+			runeSQL = SQL_RUNE_RESIST;
 			break;
 		default:
 			gi.dprintf("Bad rune selected.\n");
 			break;
 		}
 		stats_add(other, runeID, 1);
+		stats_add(other, runeSQL, 1); // BUZZKILL - SQLITE STATS
 		sl_LogPickup(&gi,
 			"PlayerEvent",
 			other->client->pers.netname,

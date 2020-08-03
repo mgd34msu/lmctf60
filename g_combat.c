@@ -78,6 +78,12 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 
 	targ->enemy = attacker;
 
+	if (attacker && attacker->client && Q_stricmp(attacker->client->pers.weapon->classname, "weapon_railgun") == 0)
+	{
+		stats_add(attacker, STATS_RAIL_KILL, 1); // BUZZKILL - IMPROVED ANALYTICS - RAIL STATS
+		stats_add(attacker, SQL_RAIL_KILL, 1); // BUZZKILL - SQLITE STATS - RAIL STATS
+	}
+
 #ifdef MONSTERS_OK
 	if ((targ->svflags & SVF_MONSTER) && (targ->deadflag != DEAD_DEAD))
 	{
@@ -88,6 +94,7 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 			if (coop->value && attacker->client)
 			{
 				stats_add(attacker, STATS_SCORE, 1);
+				stats_add(attacker, SQL_SCORE, 1); // BUZZKILL - SQLITE STATS
 				attacker->client->resp.score++;
 			}
 			// medics won't heal monsters that they kill themselves
@@ -546,6 +553,23 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	if (!(dflags & DAMAGE_NO_PROTECTION) && CheckTeamDamage (targ, attacker))
 		return;
 
+	// BUZZKILL - ADVANCED ANALYTICS - START
+	if (attacker && attacker->client)
+	{
+		if (Q_stricmp(attacker->client->pers.weapon->classname, "weapon_railgun") == 0)
+		{
+			stats_add(attacker, STATS_RAIL_HIT, 1); // BUZZKILL - IMPROVED ANALYTICS - RAIL STATS
+			stats_add(attacker, SQL_RAIL_HIT, 1); // BUZZKILL - SQLITE STATS - RAIL STATS
+		}
+		// Note: Damage given and received is not currently working - causes frequent crashes
+		/*if (targ && targ->client && damage && mod != MOD_TELEFRAG)
+		{
+			stats_add(attacker, STATS_DAMAGE_OUT, damage);
+			stats_add(targ, STATS_DAMAGE_IN, damage);
+		}*/
+	}
+	// BUZZKILL - ADVANCED ANALYTICS - END
+
 // do the damage
 	if (take)
 	{
@@ -593,6 +617,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 		{
 			if (attacker && attacker->client)
 				attacker->client->hit_carrier_time = level.time;
+				gi.sound(attacker, CHAN_ITEM, gi.soundindex("fc-hit.wav"), 1, ATTN_NORM, 0); // plays Q3 'hit' sound when FC successfully attacked (must have in pak or quake2\lmctf\sound directory)
 		}
 		// END LM_JORM
 			

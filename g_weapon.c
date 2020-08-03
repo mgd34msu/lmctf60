@@ -771,7 +771,11 @@ void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 	}
 
 	if (self->client)
+	{
 		PlayerNoise(self, tr.endpos, PNOISE_IMPACT);
+		stats_add(self, STATS_RAIL_SHOT, 1); // BUZZKILL - IMPROVED ANALYTICS - RAIL STATS
+		stats_add(self, SQL_RAIL_SHOT, 1); // BUZZKILL - SQLITE STATS - RAIL STATS
+	}
 }
 
 

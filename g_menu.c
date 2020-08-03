@@ -57,6 +57,7 @@ void Ref_PracticeFlagBlue_Exec(edict_t *ent);
 void ClearPassword_Exec (edict_t *ent);
 void Ref_Kick_Menu (edict_t *ent);
 void RefTogglePause(edict_t *ent);
+void Ref_Force_Observe(edict_t *ent);
 void Ref_Map_Menu (edict_t *ent);
 void Ref_Match_A_Menu (edict_t *ent);
 void Ref_Match_B_Menu (edict_t *ent);
@@ -724,11 +725,12 @@ void Ref_Main_Menu (edict_t *ent)
 		Menu_Set(ent, 9, "Continue Match", RefTogglePause);
 	else
 		Menu_Set(ent, 9, "Pause Match", RefTogglePause);
-	Menu_Set(ent, 10, "Practice Settings", Ref_Practice_Menu);
-	Menu_Set(ent, 11, "Referee Help", Ref_Help_Menu);
+	Menu_Set(ent, 10, "Force Observers", Ref_Force_Observe);
+	Menu_Set(ent, 11, "Practice Settings", Ref_Practice_Menu);
+	Menu_Set(ent, 12, "Referee Help", Ref_Help_Menu);
 		
 	if (ent->client->ctf.extra_flags & CTF_EXTRAFLAGS_RCON)
-		Menu_Set(ent, 13, "Save Config (RCON)", SaveServer_Exec);
+		Menu_Set(ent, 14, "Save Config (RCON)", SaveServer_Exec);
 
 	Menu_Draw (ent);
 	gi.unicast (ent, true);
@@ -742,6 +744,18 @@ void RefTogglePause(edict_t *ent)
 		SetPause(true);
 	
 	Ref_Main_Menu(ent);
+}
+
+void Ref_Force_Observe(edict_t* ent)
+{
+
+	for (int i = 0; i < maxclients->value; i++)
+	{
+		ent = g_edicts + 1 + i;
+		if (!ent->inuse)
+			continue;
+		Cmd_Observe_f(ent, CTF_TEAM_OBSERVER);
+	}
 }
 
 void SaveServer_Exec(edict_t *ent)
